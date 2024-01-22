@@ -18,7 +18,7 @@ The primary objectives of this technical assessment are as follows:
 
 1. **Identify Performance Issues:** Evaluate the existing codebase for any performance bottlenecks, inefficient algorithms, or resource-heavy operations that may impact the app's performance.
 
-2. **Document Issues:** Clearly document identified performance issues, providing details on the specific areas of concern and their potential impact on the application's performance.
+2. **Document Issues:** Thoroughly document any performance issues discovered during the assessment. Provide detailed insights into the specific areas of concern, accompanied by relevant data and information about the diagnostic tools used to identify these issues.
 
 3. **Recommendations:** Suggest possible solutions or improvements to address the identified performance issues. This may include code optimizations, algorithm changes, or architecture adjustments.
 
@@ -44,15 +44,13 @@ To begin the assessment, follow these steps:
 
 ## Assessment Guidelines
 
-During the assessment, focus on the following aspects:
+We are seeking a **performance analysis** report rather than a PR review. Therefore, during the assessment, concentrate on the following aspects:
 
 - **User Interface (UI) Performance:** Evaluate the smoothness and responsiveness of the user interface, especially when scrolling through the character feed and navigating the comics.
 
 - **Network Requests:** Examine the efficiency of network requests made to the Marvel Comics API. Identify any unnecessary or redundant requests that may impact the app's responsiveness.
 
 - **Resource Management:** Assess how the app manages resources, including memory usage and potential memory leaks. Look for areas where resource cleanup or optimization may be necessary.
-
-- **Code Quality:** Analyze the overall code quality, adherence to best practices, and readability. Identify any code smells or anti-patterns that may contribute to performance issues.
 
 ## Documentation and Submission
 
