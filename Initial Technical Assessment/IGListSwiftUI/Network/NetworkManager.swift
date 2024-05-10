@@ -1,19 +1,21 @@
-import Foundation
 import CryptoKit
+import Foundation
 
 import UIKit
 
 private class Constants {
-    struct API {
+    enum API {
         static let URL = "https://gateway.marvel.com/v1/public/"
         static let apiPublicKey = <# apiPublicKey #>
         static let apiPrivateKey = <# apiPrivateKey #>
         static var timestamp: String {
             return String(Date().getTimeIntervalSince1970())
         }
+
         static var hash: String {
             return String(timestamp + apiPrivateKey + apiPublicKey).md5()
         }
+
         static var parametrs = ["apikey": apiPublicKey,
                                 "ts": timestamp,
                                 "hash": hash,
@@ -22,7 +24,6 @@ private class Constants {
 }
 
 class NetworkManager {
-
     static let shared = NetworkManager()
 
     func fetchCharacters(with name: String? = nil) async throws -> [Character] {
@@ -104,13 +105,9 @@ class NetworkManager {
         } catch {
             return []
         }
-        
     }
 
-    static var session = {
-        return URLSession.shared
-    }()
-
+    static var session = URLSession.shared
 }
 
 extension String {

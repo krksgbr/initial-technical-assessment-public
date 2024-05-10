@@ -5,7 +5,7 @@ struct Character: Decodable, Hashable, Identifiable {
     var name: String?
     let description: String?
     let image: CharacterImage?
-    
+
     enum CodingKeys: String, CodingKey {
         case id
         case name
@@ -50,14 +50,13 @@ struct TextObjects: Decodable {
 struct Comic: Decodable {
     let id: Int
     var title: String
-    var images : [CharacterImage] = []
+    var images: [CharacterImage] = []
     var textObjects: [TextObjects]
 
-    
     enum CodingKeys: String, CodingKey {
         case id
         case title
         case images
-        case textObjects = "textObjects"
+        case textObjects
     }
 }

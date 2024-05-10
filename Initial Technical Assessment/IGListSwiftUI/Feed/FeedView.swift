@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct FeedView: View {
-
     @ObservedObject var viewModel = FeedViewModel()
 
     var body: some View {
@@ -11,18 +10,18 @@ struct FeedView: View {
                     ForEach(Array(viewModel.items.keys.sorted(by: { $0.name ?? "" < $1.name ?? "" })), id: \.id) { character in
                         superHero(character: character)
                             .igListCellSize { cv in
-                                return .init(width: cv.frame.width, height: 110)
+                                .init(width: cv.frame.width, height: 110)
                             }
                         if let comics = viewModel.items[character] {
                             ForEach(comics, id: \.id) { comic in
                                 FeedItemView(
                                     viewModel: .init(character: character, comic: comic, likeCount: viewModel.like[character] ?? 0, didTapLike: viewModel.didTapLike),
                                     comicView: {
-                                       comicView(comic: $0)
+                                        comicView(comic: $0)
                                     }
                                 )
                                 .igListCellSize { cv in
-                                    return .init(width: cv.frame.width, height: cv.frame.width)
+                                    .init(width: cv.frame.width, height: cv.frame.width)
                                 }
                             }
                         }
@@ -30,9 +29,9 @@ struct FeedView: View {
                     Text("Data provided by Marvel. © 2014 Marvel")
                 }
             } else {
-                TimelineView(.periodic(from: .now, by: 0.5)) { timeline in
-                    let scale = CGFloat.random(in: 0.3...1.0)
-                    let color: Color = [.green, .blue, .red,.yellow].randomElement()!
+                TimelineView(.periodic(from: .now, by: 0.5)) { _ in
+                    let scale = CGFloat.random(in: 0.3 ... 1.0)
+                    let color: Color = [.green, .blue, .red, .yellow].randomElement()!
                     Circle()
                         .scale(scale)
                         .foregroundColor(color)
@@ -79,7 +78,6 @@ struct FeedView: View {
 }
 
 class FeedViewModel: ObservableObject {
-
     @Published var items: [Character: [Comic]] = [:]
     @Published var like: [Character: Int] = [:]
     @Published var color: [Character: Color] = [:]
@@ -88,11 +86,11 @@ class FeedViewModel: ObservableObject {
 
     func fetchData() async {
         do {
-            self.items = try await withThrowingTaskGroup(of: (Character, [Comic]).self, returning: [Character: [Comic]].self) { taskGroup in
+            items = try await withThrowingTaskGroup(of: (Character, [Comic]).self, returning: [Character: [Comic]].self) { taskGroup in
                 let items = try await NetworkManager.shared.fetchCharacters()
                 for character in items {
                     taskGroup.addTask {
-                        return (character, (try? await NetworkManager.shared.fetchComics(with: String(character.id))) ?? [])
+                        (character, (try? await NetworkManager.shared.fetchComics(with: String(character.id))) ?? [])
                     }
                 }
                 var comics = [Character: [Comic]]()
@@ -107,7 +105,6 @@ class FeedViewModel: ObservableObject {
     }
 
     func didTapLike(character: Character) {
-        like[character] = like[character].flatMap({ $0 + 1}) ?? 1
+        like[character] = like[character].flatMap { $0 + 1 } ?? 1
     }
-
 }

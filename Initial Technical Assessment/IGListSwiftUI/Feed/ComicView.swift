@@ -1,15 +1,15 @@
-import SwiftUI
 import CoreImage
+import SwiftUI
 
 struct ComicView: View {
-
     let comic: Comic
-    
+
     @State var color: Color?
 
     init(comic: Comic) {
         self.comic = comic
     }
+
     var body: some View {
         Color.clear
             .overlay {
@@ -34,11 +34,9 @@ struct ComicView: View {
                 }
             }
     }
-
 }
 
 struct ComicImage: View {
-
     let url: URL
 
     @State var image: Image?
@@ -91,14 +89,13 @@ struct ComicImage: View {
                 Color.gray
             }
         }
-        .onChange(of: viewModel.image, { oldValue, newValue in
+        .onChange(of: viewModel.image) { _, newValue in
             guard let newValue else {
                 return
             }
 
             self.color = Color(uiColor: newValue.blurAndAverageColor(blurRadius: 1))
-
-        })
+        }
         .task {
             await viewModel.fetchImage(url: url)
         }

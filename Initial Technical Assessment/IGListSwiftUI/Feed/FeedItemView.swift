@@ -1,17 +1,15 @@
 import SwiftUI
 
-
 struct FeedItemView: View {
-
     class ViewModel: ObservableObject {
         @Published var character: Character
         @Published var comic: Comic
         @Published var imageURL: URL?
         @Published var likeCount: Int
-        
-        var didTapLike: (Character)-> Void
 
-        init(character: Character, comic: Comic, likeCount: Int, didTapLike: @escaping (Character)-> Void) {
+        var didTapLike: (Character) -> Void
+
+        init(character: Character, comic: Comic, likeCount: Int, didTapLike: @escaping (Character) -> Void) {
             self.character = character
             self.comic = comic
             self.likeCount = likeCount
@@ -19,9 +17,8 @@ struct FeedItemView: View {
         }
 
         func onAppear() {
-            self.imageURL = character.image?.imageURL(size: .portrait)
+            imageURL = character.image?.imageURL(size: .portrait)
         }
-
     }
 
     @ObservedObject var viewModel: ViewModel
@@ -31,8 +28,8 @@ struct FeedItemView: View {
     var body: some View {
         Color.gray.overlay {
             comicView(viewModel.comic)
-            .frame(height: 400)
-            .ignoresSafeArea()
+                .frame(height: 400)
+                .ignoresSafeArea()
         }
         .overlay(alignment: .topLeading) {
             header
@@ -46,7 +43,7 @@ struct FeedItemView: View {
         HStack {
             if let url = viewModel.imageURL {
                 ComicImage(
-                    url: url, 
+                    url: url,
                     color: .constant(nil)
                 )
                 .frame(width: 40, height: 40)

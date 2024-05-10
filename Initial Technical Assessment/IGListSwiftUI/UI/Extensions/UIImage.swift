@@ -1,7 +1,6 @@
 import UIKit
 
 extension UIImage {
-
     func blurAndAverageColor(blurRadius: CGFloat) -> UIColor {
         let brightnessFactor: CGFloat = 2
         guard let ciImage = CIImage(image: self) else {
