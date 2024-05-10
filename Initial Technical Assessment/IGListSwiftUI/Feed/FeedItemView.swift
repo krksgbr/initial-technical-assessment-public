@@ -1,44 +1,41 @@
 import SwiftUI
 
-
 struct FeedItemView: View {
-
     class ViewModel: ObservableObject {
         @Published var character: Character
         @Published var comic: Comic
         @Published var imageURL: URL?
         @Published var likeCount: Int
-        
-        var didTapLike: (Character)-> Void
 
-        init(character: Character, comic: Comic, likeCount: Int, didTapLike: @escaping (Character)-> Void) {
+        init(character: Character, comic: Comic) {
             self.character = character
             self.comic = comic
-            self.likeCount = likeCount
-            self.didTapLike = didTapLike
-        }
-
-        func onAppear() {
+            self.likeCount = 0
             self.imageURL = character.image?.imageURL(size: .portrait)
         }
 
+        func likeButtonTapped() {
+            likeCount += 1
+        }
     }
 
     @ObservedObject var viewModel: ViewModel
 
-    let comicView: (Comic) -> AnyView
-
     var body: some View {
         Color.gray.overlay {
-            comicView(viewModel.comic)
-            .frame(height: 400)
-            .ignoresSafeArea()
+            ComicView(comic: viewModel.comic)
+                .ignoresSafeArea()
         }
         .overlay(alignment: .topLeading) {
             header
                 .padding()
         }
-        .clipShape(RoundedRectangle(cornerRadius: 40))
+        .clipShape(RoundedRectangle(cornerRadius: 30))
+        .igListCellSize { cv in
+            .init(width: cv.frame.width, height: cv.frame.width)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 5)
     }
 
     @ViewBuilder
@@ -46,8 +43,7 @@ struct FeedItemView: View {
         HStack {
             if let url = viewModel.imageURL {
                 ComicImage(
-                    url: url, 
-                    color: .constant(nil)
+                    url: url
                 )
                 .frame(width: 40, height: 40)
                 .clipShape(Circle())
@@ -58,7 +54,7 @@ struct FeedItemView: View {
                 .shadow(radius: 5)
             Spacer()
             Button(action: {
-                viewModel.didTapLike(viewModel.character)
+                viewModel.likeButtonTapped()
             }, label: {
                 ZStack {
                     if viewModel.likeCount == 0 {
@@ -77,9 +73,6 @@ struct FeedItemView: View {
                 .background(Material.thin)
                 .cornerRadius(10)
             })
-        }
-        .onAppear {
-            viewModel.onAppear()
         }
     }
 }

@@ -4,7 +4,7 @@ import SwiftUI
 struct Initial_Technical_AssessmentApp: App {
     var body: some Scene {
         WindowGroup {
-            FeedView()
+            HomeView()
         }
     }
 }

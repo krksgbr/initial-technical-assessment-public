@@ -1,41 +1,32 @@
 import UIKit
 
 extension UIImage {
-
-    func blurAndAverageColor(blurRadius: CGFloat) -> UIColor {
+    func averageColor() -> UIColor {
         let brightnessFactor: CGFloat = 2
-        guard let ciImage = CIImage(image: self) else {
+        guard let cgImage = cgImage else {
             return UIColor.white
         }
 
-        // Apply blur filter
-        let blurFilter = CIFilter(name: "CIGaussianBlur")
-        blurFilter?.setValue(ciImage, forKey: kCIInputImageKey)
-        blurFilter?.setValue(blurRadius, forKey: kCIInputRadiusKey)
-
-        guard let blurredImage = blurFilter?.outputImage else {
-            return UIColor.white
-        }
+        let width = 40
+        let height = 40
+        let totalPixels = width * height
 
         // Calculate average color with brightness adjustment for dark colors
-        let extent = blurredImage.extent
-        let context = CIContext(options: nil)
-        let bitmap = context.createCGImage(blurredImage, from: extent)
-        let rawData = UnsafeMutablePointer<UInt8>.allocate(capacity: 4 * Int(extent.width) * Int(extent.height))
-        let bytesPerRow = 4 * Int(extent.width)
+        let rawData = UnsafeMutablePointer<UInt8>.allocate(capacity: 4 * totalPixels)
+        let bytesPerRow = 4 * width
 
         let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let bitmapContext = CGContext(data: rawData, width: Int(extent.width), height: Int(extent.height), bitsPerComponent: 8, bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+        guard let bitmapContext = CGContext(data: rawData, width: width, height: height, bitsPerComponent: 8, bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return UIColor.white }
 
-        bitmapContext?.draw(bitmap!, in: CGRect(origin: .zero, size: extent.size))
+        bitmapContext.draw(cgImage, in: CGRect(origin: .zero, size: CGSize(width: width, height: height)))
 
         var totalRed: CGFloat = 0
         var totalGreen: CGFloat = 0
         var totalBlue: CGFloat = 0
 
-        for y in 0..<Int(extent.height) {
-            for x in 0..<Int(extent.width) {
-                let offset = 4 * (y * Int(extent.width) + x)
+        for y in 0..<height {
+            for x in 0..<width {
+                let offset = 4 * (y * width + x)
                 let red = CGFloat(rawData[offset]) / 255.0
                 let green = CGFloat(rawData[offset + 1]) / 255.0
                 let blue = CGFloat(rawData[offset + 2]) / 255.0
@@ -46,10 +37,9 @@ extension UIImage {
             }
         }
 
-        let pixelCount = CGFloat(extent.width * extent.height)
-        let averageRed = totalRed / pixelCount
-        let averageGreen = totalGreen / pixelCount
-        let averageBlue = totalBlue / pixelCount
+        let averageRed = totalRed / CGFloat(totalPixels)
+        let averageGreen = totalGreen / CGFloat(totalPixels)
+        let averageBlue = totalBlue / CGFloat(totalPixels)
 
         var adjustedRed = averageRed
         var adjustedGreen = averageGreen
@@ -64,7 +54,6 @@ extension UIImage {
         }
 
         rawData.deallocate()
-
         return UIColor(red: adjustedRed, green: adjustedGreen, blue: adjustedBlue, alpha: 1.0)
     }
 }

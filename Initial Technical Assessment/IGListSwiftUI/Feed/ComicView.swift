@@ -1,23 +1,36 @@
-import SwiftUI
 import CoreImage
+import SwiftUI
 
 struct ComicView: View {
-
     let comic: Comic
-    
+    let image: CharacterImage?
+
     @State var color: Color?
 
     init(comic: Comic) {
         self.comic = comic
+        self.image = comic.images.first
     }
+
+    func calculateColor(image: UIImage) {
+        DispatchQueue.global(qos: .userInteractive).async {
+            let uiColor = image.averageColor()
+            DispatchQueue.main.async {
+                self.color = Color(uiColor: uiColor)
+            }
+        }
+    }
+
     var body: some View {
         Color.clear
             .overlay {
-                ForEach(comic.images, id: \.path) { image in
+                if let image = image {
                     ComicImage(
                         url: image.imageURL(size: .portrait)!,
-                        color: $color
+                        onLoad: calculateColor
                     )
+                } else {
+                    Color.gray
                 }
             }
             .overlay(alignment: .bottomLeading) {
@@ -28,57 +41,43 @@ struct ComicView: View {
                             .fontWeight(.black)
                     }
                     .padding(40)
-                    .shadow(color: .black, radius: 4)
+                    .shadow(color: .black, radius: image != nil ? 4 : 0)
                     .foregroundColor(color)
                     .transition(.opacity)
                 }
+            }.onAppear {
+                if comic.images.isEmpty {
+                    self.color = Color.black
+                }
             }
     }
-
 }
 
 struct ComicImage: View {
-
     let url: URL
+    var onLoad: ((UIImage) -> Void)? = nil
 
-    @State var image: Image?
+    @State var image: LoadableImage = .idle
+    @Environment(\.imageLoader) private var imageLoader
 
-    @Binding var color: Color?
-
-    enum Status {
-        case loading
-        case loaded
+    enum LoadableImage {
         case idle
+        case loading
+        case loaded(UIImage)
+        case error
     }
-
-    class ViewModel: ObservableObject {
-        @Published var image: UIImage?
-        @Published var state: Status = .idle
-
-        @MainActor
-        func fetchImage(url: URL) async {
-            state = .loading
-            do {
-                let data = try await NetworkManager.session.data(for: URLRequest(url: url)).0
-                if let image = UIImage(data: data) {
-                    self.image = image
-                }
-            } catch {
-                print(error)
-            }
-            state = .loaded
-        }
-    }
-
-    @StateObject var viewModel = ViewModel()
 
     var body: some View {
         ZStack {
-            if viewModel.state == .loading {
+            switch image {
+            case .idle, .loading:
                 ProgressView()
                     .scaleEffect(2)
-            } else if viewModel.state == .loaded, let image = viewModel.image {
-                Image(uiImage: image).resizable()
+            case .error:
+                Rectangle()
+                    .background(Color.red)
+            case .loaded(let uiImage):
+                Image(uiImage: uiImage).resizable()
                     .aspectRatio(contentMode: .fill)
                     .overlay {
                         LinearGradient(
@@ -87,20 +86,22 @@ struct ComicImage: View {
                             endPoint: .bottom
                         )
                     }
-            } else {
-                Color.gray
             }
         }
-        .onChange(of: viewModel.image, { oldValue, newValue in
-            guard let newValue else {
-                return
+        .onAppear {
+            loadImage()
+        }
+    }
+
+    func loadImage() {
+        imageLoader.fetch(url) { result in
+            switch result {
+            case .success(let loadedImage):
+                image = .loaded(loadedImage)
+                onLoad?(loadedImage)
+            case .failure:
+                image = .error
             }
-
-            self.color = Color(uiColor: newValue.blurAndAverageColor(blurRadius: 1))
-
-        })
-        .task {
-            await viewModel.fetchImage(url: url)
         }
     }
 }
