@@ -90,11 +90,15 @@ struct ComicImage: View {
             }
         }
         .onChange(of: viewModel.image) { _, newValue in
-            guard let newValue else {
+            guard let newValue = newValue else {
                 return
             }
-
-            self.color = Color(uiColor: newValue.blurAndAverageColor(blurRadius: 1))
+            DispatchQueue.global(qos: .userInteractive).async {
+                let newColor = Color(uiColor: newValue.blurAndAverageColor(blurRadius: 1))
+                DispatchQueue.main.async {
+                    self.color = newColor
+                }
+            }
         }
         .task {
             await viewModel.fetchImage(url: url)
