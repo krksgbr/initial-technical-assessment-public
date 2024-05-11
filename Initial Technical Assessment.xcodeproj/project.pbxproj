@@ -31,6 +31,8 @@
 		8D7DFC9E2B4723A2005D6BE7 /* IGListInsetBehaviour.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7DFC8D2B4723A2005D6BE7 /* IGListInsetBehaviour.swift */; };
 		8D7DFC9F2B4723A2005D6BE7 /* IGListCV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7DFC8E2B4723A2005D6BE7 /* IGListCV.swift */; };
 		D58549BA2BF2CCA7007C5D8F /* Initial_Technical_Assessment_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58549B92BF2CCA7007C5D8F /* Initial_Technical_Assessment_Tests.swift */; };
+		D5CC2F7D2BEE48FF005EDBCE /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5CC2F7C2BEE48FF005EDBCE /* ImageLoader.swift */; };
+		D5CC2F7F2BEE6AB6005EDBCE /* ImageLoaderEnv.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5CC2F7E2BEE6AB6005EDBCE /* ImageLoaderEnv.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +72,8 @@
 		8D7DFC8E2B4723A2005D6BE7 /* IGListCV.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IGListCV.swift; sourceTree = "<group>"; };
 		D58549B72BF2CCA7007C5D8F /* Initial Technical Assessment Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Initial Technical Assessment Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D58549B92BF2CCA7007C5D8F /* Initial_Technical_Assessment_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Initial_Technical_Assessment_Tests.swift; sourceTree = "<group>"; };
+		D5CC2F7C2BEE48FF005EDBCE /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
+		D5CC2F7E2BEE6AB6005EDBCE /* ImageLoaderEnv.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoaderEnv.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +111,7 @@
 				2542658C2B48052F00E1C7B2 /* NetworkManager.swift */,
 				2542658D2B48052F00E1C7B2 /* CharacterImage.swift */,
 				2542658E2B48052F00E1C7B2 /* NetworkError.swift */,
+				D5CC2F7C2BEE48FF005EDBCE /* ImageLoader.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -198,6 +203,7 @@
 				8D7DFC8B2B4723A2005D6BE7 /* IGListHideScrollIndicator.swift */,
 				8D7DFC8C2B4723A2005D6BE7 /* IGListInsets.swift */,
 				8D7DFC8D2B4723A2005D6BE7 /* IGListInsetBehaviour.swift */,
+				D5CC2F7E2BEE6AB6005EDBCE /* ImageLoaderEnv.swift */,
 			);
 			path = Environment;
 			sourceTree = "<group>";
@@ -325,7 +331,9 @@
 				8D7DFC352B472247005D6BE7 /* Initial_Technical_AssessmentApp.swift in Sources */,
 				252502442B4CF36E001C4270 /* ComicView.swift in Sources */,
 				8D7DFC9C2B4723A2005D6BE7 /* IGListHideScrollIndicator.swift in Sources */,
+				D5CC2F7F2BEE6AB6005EDBCE /* ImageLoaderEnv.swift in Sources */,
 				2542658F2B48052F00E1C7B2 /* Character.swift in Sources */,
+				D5CC2F7D2BEE48FF005EDBCE /* ImageLoader.swift in Sources */,
 				252502422B4CF299001C4270 /* FeedItemView.swift in Sources */,
 				8D7DFC902B4723A2005D6BE7 /* UIHostingController+Swizzle.swift in Sources */,
 				254265922B48052F00E1C7B2 /* NetworkError.swift in Sources */,

@@ -82,44 +82,28 @@ struct ComicView: View {
 struct ComicImage: View {
     let url: URL
 
-    @State var image: Image?
     var onLoad: ((UIImage) -> Void)?
+    @State var image: LoadableImage = .idle
+    @Environment(\.imageLoader) private var imageLoader
 
-    enum Status {
-        case loading
-        case loaded
+    enum LoadableImage {
         case idle
+        case loading
+        case loaded(UIImage)
+        case error
     }
-
-    class ViewModel: ObservableObject {
-        @Published var image: UIImage?
-        @Published var state: Status = .idle
-
-        @MainActor
-        func fetchImage(url: URL, onLoad: ((UIImage) -> Void)?) async {
-            state = .loading
-            do {
-                let data = try await NetworkManager.session.data(for: URLRequest(url: url)).0
-                if let image = UIImage(data: data) {
-                    self.image = image
-                    onLoad?(image)
-                }
-            } catch {
-                print(error)
-            }
-            state = .loaded
-        }
-    }
-
-    @StateObject var viewModel = ViewModel()
 
     var body: some View {
         ZStack {
-            if viewModel.state == .loading {
+            switch image {
+            case .idle, .loading:
                 ProgressView()
                     .scaleEffect(2)
-            } else if viewModel.state == .loaded, let image = viewModel.image {
-                Image(uiImage: image).resizable()
+            case .error:
+                Rectangle()
+                    .background(Color.red)
+            case .loaded(let uiImage):
+                Image(uiImage: uiImage).resizable()
                     .aspectRatio(contentMode: .fill)
                     .overlay {
                         LinearGradient(
@@ -128,12 +112,18 @@ struct ComicImage: View {
                             endPoint: .bottom
                         )
                     }
-            } else {
-                Color.gray
             }
         }
-        .task {
-            await viewModel.fetchImage(url: url, onLoad: onLoad)
+        .onAppear {
+            imageLoader.fetch(url) { result in
+                switch result {
+                case .success(let loaded):
+                    image = .loaded(loaded)
+                    onLoad?(loaded)
+                case .failure:
+                    image = .error
+                }
+            }
         }
     }
 }
