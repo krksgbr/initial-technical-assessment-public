@@ -1,6 +1,22 @@
 import CoreImage
 import SwiftUI
 
+class ColorCache {
+    private let colors = NSCache<NSNumber, UIColor>()
+    static let shared = ColorCache()
+    init() {
+        colors.countLimit = 10
+    }
+
+    func setColor(image: UIImage, uiColor: UIColor) {
+        colors.setObject(uiColor, forKey: image.hashValue as NSNumber)
+    }
+
+    func getColor(image: UIImage) -> UIColor? {
+        return colors.object(forKey: image.hashValue as NSNumber)
+    }
+}
+
 struct ComicView: View {
     let comic: Comic
 
@@ -11,10 +27,15 @@ struct ComicView: View {
     }
 
     func calculateColor(image: UIImage) {
+        if let uiColor = ColorCache.shared.getColor(image: image) {
+            color = Color(uiColor: uiColor)
+            return
+        }
         DispatchQueue.global(qos: .userInteractive).async {
-            let newColor = Color(uiColor: image.averageColor())
+            let uiColor = image.averageColor()
+            ColorCache.shared.setColor(image: image, uiColor: uiColor)
             DispatchQueue.main.async {
-                self.color = newColor
+                self.color = Color(uiColor: uiColor)
             }
         }
     }
