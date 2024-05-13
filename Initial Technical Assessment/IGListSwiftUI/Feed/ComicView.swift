@@ -10,13 +10,22 @@ struct ComicView: View {
         self.comic = comic
     }
 
+    func calculateColor(image: UIImage) {
+        DispatchQueue.global(qos: .userInteractive).async {
+            let newColor = Color(uiColor: image.blurAndAverageColor(blurRadius: 1))
+            DispatchQueue.main.async {
+                self.color = newColor
+            }
+        }
+    }
+
     var body: some View {
         Color.clear
             .overlay {
                 ForEach(comic.images, id: \.path) { image in
                     ComicImage(
                         url: image.imageURL(size: .portrait)!,
-                        color: $color
+                        onLoad: calculateColor
                     )
                 }
             }
@@ -40,8 +49,7 @@ struct ComicImage: View {
     let url: URL
 
     @State var image: Image?
-
-    @Binding var color: Color?
+    var onLoad: ((UIImage) -> Void)?
 
     enum Status {
         case loading
@@ -54,12 +62,13 @@ struct ComicImage: View {
         @Published var state: Status = .idle
 
         @MainActor
-        func fetchImage(url: URL) async {
+        func fetchImage(url: URL, onLoad: ((UIImage) -> Void)?) async {
             state = .loading
             do {
                 let data = try await NetworkManager.session.data(for: URLRequest(url: url)).0
                 if let image = UIImage(data: data) {
                     self.image = image
+                    onLoad?(image)
                 }
             } catch {
                 print(error)
@@ -89,19 +98,8 @@ struct ComicImage: View {
                 Color.gray
             }
         }
-        .onChange(of: viewModel.image) { _, newValue in
-            guard let newValue = newValue else {
-                return
-            }
-            DispatchQueue.global(qos: .userInteractive).async {
-                let newColor = Color(uiColor: newValue.blurAndAverageColor(blurRadius: 1))
-                DispatchQueue.main.async {
-                    self.color = newColor
-                }
-            }
-        }
         .task {
-            await viewModel.fetchImage(url: url)
+            await viewModel.fetchImage(url: url, onLoad: onLoad)
         }
     }
 }

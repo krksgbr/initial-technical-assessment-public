@@ -43,8 +43,7 @@ struct FeedItemView: View {
         HStack {
             if let url = viewModel.imageURL {
                 ComicImage(
-                    url: url,
-                    color: .constant(nil)
+                    url: url
                 )
                 .frame(width: 40, height: 40)
                 .clipShape(Circle())

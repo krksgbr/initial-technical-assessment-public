@@ -52,8 +52,7 @@ struct FeedView: View {
             VStack {
                 if let url = character.image?.imageURL(size: .portrait) {
                     ComicImage(
-                        url: url,
-                        color: .constant(nil)
+                        url: url
                     )
                     .frame(width: 80, height: 80)
                     .clipShape(Circle())
