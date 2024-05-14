@@ -8,33 +8,28 @@ private class Constants {
         static let URL = "https://gateway.marvel.com/v1/public/"
         static let apiPublicKey = <# apiPublicKey #>
         static let apiPrivateKey = <# apiPrivateKey #>
-        static var timestamp: String {
-            return String(Date().getTimeIntervalSince1970())
-        }
-
-        static var hash: String {
-            return String(timestamp + apiPrivateKey + apiPublicKey).md5()
-        }
-
-        static var parametrs = ["apikey": apiPublicKey,
-                                "ts": timestamp,
-                                "hash": hash,
-                                "limit": "50"]
     }
 }
 
 class NetworkManager {
     static let shared = NetworkManager()
 
-    func fetchCharacters(with name: String? = nil) async throws -> [Character] {
-        var parameters = Constants.API.parametrs
-        let urlString = "\(Constants.API.URL)characters"
+    func buildParams(offset: Int, limit: Int, orderBy: String) -> [String: String] {
+        let timestamp = String(Date().getTimeIntervalSince1970())
+        let hash = String(timestamp + Constants.API.apiPrivateKey + Constants.API.apiPublicKey).md5()
+        return [
+            "apikey": Constants.API.apiPublicKey,
+            "ts": timestamp,
+            "hash": hash,
+            "offset": String(offset),
+            "limit": String(limit),
+            "orderBy": orderBy
+        ]
+    }
 
-        if let name = name, !name.isEmpty {
-            parameters["nameStartsWith"] = name
-        } else {
-            parameters.removeValue(forKey: "nameStartsWith")
-        }
+    func fetchCharacters(offset: Int, limit: Int) async throws -> [Character] {
+        let parameters = self.buildParams(offset: offset, limit: limit, orderBy: "name")
+        let urlString = "\(Constants.API.URL)characters"
 
         var urlComponents = URLComponents(string: urlString)
         urlComponents?.queryItems = parameters.map { URLQueryItem(name: $0.key, value: $0.value) }
@@ -70,8 +65,9 @@ class NetworkManager {
         }
     }
 
-    func fetchComics(with id: String) async throws -> [Comic] {
-        let parameters = Constants.API.parametrs
+    func fetchComics(with id: Int, offset: Int, limit: Int) async throws -> [Comic] {
+        let parameters = self.buildParams(offset: offset, limit: limit, orderBy: "issueNumber")
+
         let urlString = "\(Constants.API.URL)characters/\(id)/comics"
 
         var urlComponents = URLComponents(string: urlString)
