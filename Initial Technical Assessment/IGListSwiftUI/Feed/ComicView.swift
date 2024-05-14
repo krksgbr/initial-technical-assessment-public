@@ -19,11 +19,13 @@ class ColorCache {
 
 struct ComicView: View {
     let comic: Comic
+    let thumbnail: CharacterImage?
 
     @State var color: Color?
 
     init(comic: Comic) {
         self.comic = comic
+        self.thumbnail = comic.images.first
     }
 
     func calculateColor(image: UIImage) {
@@ -41,26 +43,37 @@ struct ComicView: View {
     }
 
     var body: some View {
+        let thumbnailURL = thumbnail?.imageURL(size: .portrait)
         Color.clear
             .overlay {
-                ForEach(comic.images, id: \.path) { image in
+                if let url = thumbnailURL {
                     ComicImage(
-                        url: image.imageURL(size: .portrait)!,
+                        url: url,
                         onLoad: calculateColor
                     )
+                } else {
+                    LinearGradient(
+                        colors: [.cyan, .blue],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ).saturation(0.2)
                 }
             }
             .overlay(alignment: .bottomLeading) {
-                if let color {
+                if let color = color {
                     VStack {
                         Text(comic.title)
                             .font(.title)
                             .fontWeight(.black)
                     }
                     .padding(40)
-                    .shadow(color: .black, radius: 4)
+                    .shadow(color: .black, radius: thumbnailURL != nil ? 4 : 0)
                     .foregroundColor(color)
                     .transition(.opacity)
+                }
+            }.onAppear {
+                if thumbnailURL == nil {
+                    color = Color.black
                 }
             }
     }

@@ -15,10 +15,7 @@ struct FeedView: View {
                         if let comics = viewModel.items[character] {
                             ForEach(comics, id: \.id) { comic in
                                 FeedItemView(
-                                    viewModel: .init(character: character, comic: comic, likeCount: viewModel.like[character] ?? 0, didTapLike: viewModel.didTapLike),
-                                    comicView: {
-                                        comicView(comic: $0)
-                                    }
+                                    viewModel: .init(character: character, comic: comic, likeCount: viewModel.like[character] ?? 0, didTapLike: viewModel.didTapLike)
                                 )
                                 .igListCellSize { cv in
                                     .init(width: cv.frame.width, height: cv.frame.width)
@@ -63,16 +60,6 @@ struct FeedView: View {
                     .shadow(radius: 5)
             }
         )
-    }
-
-    func comicView(comic: Comic) -> AnyView {
-        if !comic.images.isEmpty {
-            AnyView(ComicView(
-                comic: comic
-            ))
-        } else {
-            AnyView(Text("No comic"))
-        }
     }
 }
 

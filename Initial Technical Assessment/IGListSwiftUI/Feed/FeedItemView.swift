@@ -23,11 +23,9 @@ struct FeedItemView: View {
 
     @ObservedObject var viewModel: ViewModel
 
-    let comicView: (Comic) -> AnyView
-
     var body: some View {
         Color.gray.overlay {
-            comicView(viewModel.comic)
+            ComicView(comic: viewModel.comic)
                 .frame(height: 400)
                 .ignoresSafeArea()
         }
