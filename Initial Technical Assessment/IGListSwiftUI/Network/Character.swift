@@ -42,12 +42,12 @@ struct ComicsData: Decodable {
     }
 }
 
-struct TextObjects: Decodable {
+struct TextObjects: Decodable, Hashable {
     var text: String
     var type: String
 }
 
-struct Comic: Decodable {
+struct Comic: Decodable, Hashable {
     let id: Int
     var title: String
     var images: [CharacterImage] = []

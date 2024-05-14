@@ -15,7 +15,9 @@ struct FeedView: View {
                         if let comics = viewModel.items[character] {
                             ForEach(comics, id: \.id) { comic in
                                 FeedItemView(
-                                    viewModel: .init(character: character, comic: comic, likeCount: viewModel.like[character] ?? 0, didTapLike: viewModel.didTapLike)
+                                    viewModel: .init(character: character, comic: comic, likeCount: viewModel.like[comic] ?? 0) {
+                                        viewModel.didTapLike(comic: comic)
+                                    }
                                 )
                                 .igListCellSize { cv in
                                     .init(width: cv.frame.width, height: cv.frame.width)
@@ -65,7 +67,7 @@ struct FeedView: View {
 
 class FeedViewModel: ObservableObject {
     @Published var items: [Character: [Comic]] = [:]
-    @Published var like: [Character: Int] = [:]
+    @Published var like: [Comic: Int] = [:]
     @Published var color: [Character: Color] = [:]
 
     @Published var currentChartacter: Character?
@@ -90,7 +92,7 @@ class FeedViewModel: ObservableObject {
         }
     }
 
-    func didTapLike(character: Character) {
-        like[character] = like[character].flatMap { $0 + 1 } ?? 1
+    func didTapLike(comic: Comic) {
+        like[comic] = like[comic].flatMap { $0 + 1 } ?? 1
     }
 }

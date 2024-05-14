@@ -7,9 +7,9 @@ struct FeedItemView: View {
         @Published var imageURL: URL?
         @Published var likeCount: Int
 
-        var didTapLike: (Character) -> Void
+        var didTapLike: () -> Void
 
-        init(character: Character, comic: Comic, likeCount: Int, didTapLike: @escaping (Character) -> Void) {
+        init(character: Character, comic: Comic, likeCount: Int, didTapLike: @escaping () -> Void) {
             self.character = character
             self.comic = comic
             self.likeCount = likeCount
@@ -52,7 +52,7 @@ struct FeedItemView: View {
                 .shadow(radius: 5)
             Spacer()
             Button(action: {
-                viewModel.didTapLike(viewModel.character)
+                viewModel.didTapLike()
             }, label: {
                 ZStack {
                     if viewModel.likeCount == 0 {
