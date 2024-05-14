@@ -12,7 +12,7 @@ struct ComicView: View {
 
     func calculateColor(image: UIImage) {
         DispatchQueue.global(qos: .userInteractive).async {
-            let newColor = Color(uiColor: image.blurAndAverageColor(blurRadius: 1))
+            let newColor = Color(uiColor: image.averageColor())
             DispatchQueue.main.async {
                 self.color = newColor
             }

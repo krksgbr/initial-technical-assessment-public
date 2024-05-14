@@ -7,7 +7,7 @@ final class Initial_Technical_Assessment_Tests: XCTestCase {
         let options = XCTMeasureOptions.default
         options.iterationCount = 100
         measure(options: options) {
-            let _ = image.blurAndAverageColor(blurRadius: 10)
+            let _ = image.averageColor()
         }
     }
 }

@@ -10,7 +10,7 @@ struct FeedView: View {
                     ForEach(Array(viewModel.items.keys.sorted(by: { $0.name ?? "" < $1.name ?? "" })), id: \.id) { character in
                         superHero(character: character)
                             .igListCellSize { cv in
-                                .init(width: cv.frame.width, height: 110)
+                                .init(width: cv.frame.width, height: 200)
                             }
                         if let comics = viewModel.items[character] {
                             ForEach(comics, id: \.id) { comic in
